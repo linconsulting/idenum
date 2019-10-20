@@ -36,7 +36,8 @@
             "App\\": "src/App/src/",
             "Trial\\": "src/Trial/src/",
 			"cobisja\\BootHelp\\": "vendor/boothelp/src/",
-			"cobisja\\BootHelp\\Guide\\": "vendor/boothelp/Guide/"
+			"cobisja\\BootHelp\\Guide\\": "vendor/boothelp/Guide/",
+            "Api\\": "src/Api/src/"
             
         }
     },
