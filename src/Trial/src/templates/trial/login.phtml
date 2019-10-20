@@ -1,0 +1,22 @@
+<?php $this->layout('trial-layout::default', ['title' => $this->e('Login', 'translate')]) ?>
+
+<?php $this->start('custom_styles') ?>
+    <link href="assets/bootstrap-3.3.6-dist/css/signin.css" rel="stylesheet">
+<?php $this->stop() ?>
+
+
+<form class="form-signin" method="post" accept-charset="utf-8" action="/login">
+
+    <h2 class="form-signin-heading"><?=$this->e('GNS', 'translate')?></h2>    
+
+    <label for="inputUser" class="sr-only"><?=$this->e('Utente', 'translate')?></label>                
+
+    <input type="text" id="inputUser" class="form-control" name="usr" placeholder="<?=$this->e('Utente', 'translate')?>" required autofocus>
+
+    <label for="inputPassword" class="sr-only"><?=$this->e('Password', 'translate')?></label>
+    
+    <input type="password" id="inputPassword" class="form-control" name="psw" placeholder="<?=$this->e('Password', 'translate')?>" required>
+    
+    <button class="btn btn-lg btn-primary btn-block" type="submit"><?=$this->e('Login', 'translate')?></button>
+    
+</form>

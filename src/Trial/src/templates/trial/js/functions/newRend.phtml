@@ -1,0 +1,58 @@
+<?php
+
+use Trial\Resources\Pages\TagId;
+?>
+
+<?php
+/**
+ * crea una NUOVA RENDICONTAZIONE
+ */
+?>
+
+<script type="text/javascript">
+
+
+    function newRend() {
+        
+        
+        var row = $('#<?= TagId::TABLE_MASTER ?>').DataTable().row('.selected').length * 1 == 0 ? $('#<?= TagId::TABLE_MASTER ?>').DataTable().row(0) : $('#<?= TagId::TABLE_MASTER ?>').DataTable().row('.selected');
+
+        if (row.length * 1 == 0) {
+
+            $('<div id="<?= TagId::ALERT_ERROR ?>" class="alert alert-danger"><strong><?= $this->e('Selezionare una riga', 'translate') ?></strong></div>').insertBefore('#<?= TagId::BEFORE_MAIN_TABLE ?>');
+            return;
+        }
+
+        ajx.post({url: '<?php echo "URL DA INSERIRE" ?>/evr',
+            data: {'pst_name': 'new_rend',
+                'rf_obj': {'id': $('#<?= TagId::TABLE_MASTER ?>').DataTable().cell(row.index(), 0).data()}
+            },
+            dataType: 'json',
+            success: function (data) {
+
+                if (data.resp_ok == true && typeof (data.resp_obj) == 'number') {
+
+                    $("<form/>", {'target': '_self', 'method': 'POST', 'id': '<?= TagId::FORM_POST ?>', 'action': '<?php "URL DA INSERIRE" ?>'}).appendTo('body');
+                    $('#<?= TagId::FORM_POST ?>').append('<input type="hidden" name="<?= TagId::INPUT_REND ?>" value="' + data.resp_obj + '"/>').submit();
+
+
+                } else if (data.resp_ok == false && typeof (data.resp_obj) == 'string') {
+
+                    $('#<?= TagId::ALERT_ERROR ?>').length * 1 > 0 ? $('#<?= TagId::ALERT_ERROR ?>').remove() : null;
+                    $('<div id="<?= TagId::ALERT_ERROR ?>" class="alert alert-danger"><strong>' + data.resp_obj + '</strong></div>').insertBefore('#<?= TagId::BEFORE_MAIN_TABLE ?>');
+                } else {
+
+                    $('#<?= TagId::ALERT_ERROR ?>').length * 1 > 0 ? $('#<?= TagId::ALERT_ERROR ?>').remove() : null;
+                    $('<div id="<?= TagId::ALERT_ERROR ?>" class="alert alert-danger"><strong><?= $this->e('Rendicontazione non creata', 'translate') ?></strong></div>').insertBefore('#<?= TagId::BEFORE_MAIN_TABLE ?>');
+                }
+
+
+
+            }
+        });
+        
+        
+    }
+
+
+</script>

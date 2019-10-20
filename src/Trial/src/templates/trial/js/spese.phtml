@@ -1,0 +1,240 @@
+<?php
+
+use Trial\Resources\Pages\TagId;
+use Trial\Db\Tables\Spese as Sp;
+use Trial\Db\Tables\Utenti;
+?>
+
+
+<script type="text/javascript">
+
+    var tblCell = null;
+    var tblCellAux = null;
+    var userSelData = null;
+    var update = null;
+    var li = null;
+    var irend = null;
+
+
+    $(function () {
+
+<?php
+/**
+ * 
+ * aggrega le attività di inizializzazione
+ * 
+ */
+?>
+
+        ev_init();
+
+<?php
+/**
+ * eventi TAP e DBLCLICK     
+ * sui campi della tabella master
+ * 
+ * per renderla editabile
+ * 
+ */
+?>
+
+        ev_dt_tap();
+        ev_dt_dblclick();
+
+<?php
+/**
+ * rendo editabile anche la trasposizione delle colonne in righe che
+ * avviene quando si ridimensiona la tabelle nei dispositivi smart
+ */
+?>
+        ev_dt_tap_child();
+        ev_dt_dblclick_child();
+
+
+
+
+
+    });
+
+
+
+
+
+    function ev_dt_dblclick() {
+
+        $('#<?= TagId::TABLE_MASTER ?>').on("dblclick", "td", function () {
+
+            tblCell = $('#<?= TagId::TABLE_MASTER ?>').DataTable().cell(this);
+
+            if (typeof (tblCell.index()) == 'undefined') {
+                return;
+            }
+
+<?php $i = $dataResource->getColumnsHelper()->getEditableIndex(Sp::FK_CLIENTI); ?>
+
+            if (tblCell.index().column == <?= $i === FALSE ? 999 : $i ?>) {
+
+                update = true;
+<?php if (!$dataResource->infoArea[Utenti::USR_IS_COLLAB]): ?>
+                    ev_newSp();
+<?php endif; ?>
+                return;
+            }
+            
+
+<?php $i = $dataResource->getColumnsHelper()->getEditableIndex(Sp::FLD_CAUSALE); ?>
+
+            if (tblCell.index().column == <?= $i === FALSE ? 999 : $i ?>) {
+
+                update = true;
+                buildCausale();
+                return;
+            }
+
+        });
+
+    }
+
+    
+
+    function ev_dt_dblclick_child() {
+
+
+        $('#<?= TagId::TABLE_MASTER ?>').on("dblclick", "td.child li", function () {
+
+            li = $(this);
+<?php $i = $dataResource->getColumnsHelper()->getEditableIndex(Sp::FK_CLIENTI); ?>
+
+            if (li.data('dtr-index') == <?= $i === FALSE ? 999 : $i ?>) {
+
+                update = true;
+                ev_newSp();
+                return;
+            }
+
+<?php $i = $dataResource->getColumnsHelper()->getEditableIndex(Sp::FLD_CAUSALE);?>
+
+            if (li.data('dtr-index') == <?= $i === FALSE ? 999 : $i ?>) {
+
+                update = true;
+                buildCausale();
+                return;
+            }
+
+        });
+
+    }
+
+
+
+
+<?php
+/**
+ * va alla NUOVA RENDICONTAZIONE
+ */
+?>
+
+    function gotoRend() {
+
+        var row = $('#<?= TagId::TABLE_MASTER ?>').DataTable().row('.selected').length * 1 == 0 ? $('#<?= TagId::TABLE_MASTER ?>').DataTable().row(0) : $('#<?= TagId::TABLE_MASTER ?>').DataTable().row('.selected');
+
+        if (row.length * 1 == 0) {
+
+            $('<div id="<?= TagId::ALERT_ERROR ?>" class="alert alert-danger"><strong><?= $this->e('Selezionare una riga', 'translate') ?></strong></div>').insertBefore('#<?= TagId::BEFORE_MAIN_TABLE ?>');
+            return;
+        }
+
+        if (tblCell === null) {
+            $('#<?= TagId::TABLE_MASTER ?> tr td').eq(0).trigger('dblclick');
+        }
+
+        var idr = typeof (tblCell.index()) == 'undefined' ? li.data('dtr-row') : tblCell.index().row;
+        var idc = <?= $dataResource->getColumnsHelper()->getFieldIndex(Sp::FK_RENDICONTAZIONI) === FALSE ? 999 : $dataResource->getColumnsHelper()->getFieldIndex(Sp::FK_RENDICONTAZIONI) ?>;
+
+        if ($('#<?= TagId::TABLE_MASTER ?>').DataTable().cell(idr, idc).data() * 1 == 0) {
+
+            $('<div id="<?= TagId::ALERT_ERROR ?>" class="alert alert-danger"><strong><?= $this->e('Rendicontazione non creata', 'translate') ?></strong></div>').insertBefore('#<?= TagId::BEFORE_MAIN_TABLE ?>');
+            return;
+
+        }
+
+        $("<form/>", {'target': '_self', 'method': 'POST', 'id': '<?= TagId::FORM_POST ?>', 'action': '<?php "URL DA INSERIRE" ?>'}).appendTo('body');
+        $('#<?= TagId::FORM_POST ?>').append('<input type="hidden" name="<?= TagId::INPUT_REND ?>" value="' + $('#<?= TagId::TABLE_MASTER ?>').DataTable().cell(idr, idc).data() + '"/>').submit();
+
+
+    }
+
+
+  
+
+<?php
+/**
+ * evento al click del bottone dettaglio spese
+ */
+?>
+
+    function ev_dtlSp() {
+
+        var row = $('#<?= TagId::TABLE_MASTER ?>').DataTable().row('.selected').length * 1 == 0 ? $('#<?= TagId::TABLE_MASTER ?>').DataTable().row(0) : $('#<?= TagId::TABLE_MASTER ?>').DataTable().row('.selected');
+
+        if ($('#<?= TagId::TABLE_MASTER ?>').DataTable().cell(row.index(), <?= $dataResource->getColumnsHelper()->getFieldIndex(Sp::FK_CLIENTI) ?>).data() === null
+                && $('#<?= TagId::TABLE_MASTER ?>').DataTable().cell(row.index(), <?= $dataResource->getColumnsHelper()->getFieldIndex(Sp::FLD_CAUSALE) ?>).data() == "") {
+
+            $('#<?= TagId::ALERT_ERROR ?>').length * 1 > 0 ? $('#<?= TagId::ALERT_ERROR ?>').remove() : null;
+            $('<div id="<?= TagId::ALERT_ERROR ?>" class="alert alert-danger"><strong><?= $this->e('Inserire causale', 'translate') ?></strong></div>').insertBefore('#<?= TagId::BEFORE_MAIN_TABLE ?>');
+            return;
+        }
+
+        if (row.length * 1 == 1) {
+
+            var ref = $('#<?= TagId::TABLE_MASTER ?>').DataTable().cell(row.index(), 0).data();
+            $("<form/>", {'target': '_self', 'method': 'POST', 'id': '<?= TagId::FORM_POST ?>', 'action': '<?php "URL DA INSERIRE" ?>'}).appendTo('body');
+            $('#<?= TagId::FORM_POST ?>').append('<input type="hidden" name="pst_name" value="from_sp"/>');
+            $('#<?= TagId::FORM_POST ?>').append('<input type="hidden" name="<?= TagId::INPUT_VOCI_SPESA ?>" value="' + ref + '"/>').submit();
+
+
+        } else {
+
+            $('#<?= TagId::ALERT_ERROR ?>').length * 1 > 0 ? $('#<?= TagId::ALERT_ERROR ?>').remove() : null;
+            $('<div id="<?= TagId::ALERT_ERROR ?>" class="alert alert-danger"><strong><?= $this->e('Selezionare una riga', 'translate') ?></strong></div>').insertBefore('#<?= TagId::BEFORE_MAIN_TABLE ?>');
+
+        }
+
+    }
+
+
+
+</script>
+
+
+<?php $this->insert('trial-js-funct::buildCausale', ['dataResource' => $dataResource]) ?>
+<?php $this->insert('trial-js-funct::ev_newSp', ['dataResource' => $dataResource]) ?>
+
+<?php
+/**
+ * logica eseguita per l'inserimento della nota spesa con il bp
+ * durante la creazione di un nuovo record "spesa"
+ */
+?>
+
+<?php if (!$dataResource->infoArea[Utenti::USR_IS_COLLAB] && !$dataResource->infoArea[Utenti::USR_IS_TECH]): ?>
+    <?php $this->insert('trial-js-funct::insCliente', ['dataResource' => $dataResource]) ?>
+<?php endif; ?>
+
+<?php
+/*
+ * evento per eliminare riga spesa
+ */
+?>
+<?php if ($dataResource->infoArea[Utenti::USR_IS_COLLAB] || !$dataResource->infoArea[Utenti::USR_IS_TECH]): ?>
+    <?php $this->insert('trial-js-funct::ev_delSp', ['dataResource' => $dataResource]) ?>
+<?php endif; ?>
+
+<?php /* NUOVA RENDICONTAZIONE */ ?>
+<?php $this->insert('trial-js-funct::newRend', ['dataResource' => $dataResource]) ?>
+
+<?php /* Eventi INIZIALIZZAZIONE PAGINA */ ?>
+<?php $this->insert('trial-js-funct::ev_init', ['dataResource' => $dataResource]) ?>
+<?php $this->insert('trial-js-funct::ev_dt_tap') ?>
+<?php $this->insert('trial-js-funct::ev_dt_tap_child') ?>
+

@@ -1,0 +1,81 @@
+<?php
+
+use Trial\Resources\Pages\TagId;
+use Trial\Resources\Pages\Urls;
+use Trial\Resources\Pages\Helpers\UiModal;
+?>
+
+
+<script type="text/javascript">
+
+<?php /* evento per l'eliminazione di una spesa */ ?>
+
+    function ev_delSp() {
+
+<?php
+// parametri, opzioni e contenuti variabili per il modal di CONFERMA ELIMINAZIONE
+$uiModal = new UiModal();
+$uiModal->buttonText = $this->e('Si', 'translate');
+$uiModal->buttonTextNo = $this->e('No', 'translate');
+$uiModal->buttonAction = 'delSp()';
+$uiModal->buttonActionNo = '$(\\\'#' . TagId::MODAL_CONFIRM_DEL . '\\\').modal(\\\'hide\\\')';
+$uiModal->optionModal = array('id' => TagId::MODAL_CONFIRM_DEL, 'title' => $this->e('Richiesta di conferma', 'translate'));
+$uiModal->contentModal = '<div class="alert alert-danger text-center"><strong>' . $this->e('Confermi eliminazione?', 'translate') . '</strong></div>';
+?>
+
+        if ($('#<?= TagId::MODAL_CONFIRM_DEL ?>').length == 0) {
+
+            $(document.body).append('<?= $uiModal->getJsString(TRUE) ?>');
+        }
+
+        $('#<?= TagId::MODAL_CONFIRM_DEL ?>').modal('show');
+
+    }
+
+
+    function delSp() {
+
+        var row = $('#<?= TagId::TABLE_MASTER ?>').DataTable().row('.selected');
+        
+        $('#<?= TagId::ALERT_ERROR ?>').length*1 > 0 ? $('#<?= TagId::ALERT_ERROR ?>').remove() : null;        
+
+        if (row.length * 1 == 1) {
+
+            var ref = $('#<?= TagId::TABLE_MASTER ?>').DataTable().cell(row.index(), 0).data();
+            
+            ajx.post({url: '<?= Urls::PATH_AJAX_PROVIDER ?>',
+                data: {'cName': '<?= $dataResource::PAGE_NAME ?>', 'mName': 'delete', 'mArgs': {'ref' : ref} },
+                dataType: 'json',
+                success: function (data) {
+
+                    if (data.resp_ok == true) {
+
+                        $('#<?= TagId::TABLE_MASTER ?>').DataTable().draw();
+
+                    } else if (data.resp_ok == false && typeof (data.resp_obj) == 'string') {
+
+                        $('<div id="<?= TagId::ALERT_ERROR ?>" class="alert alert-danger"><strong>' + data.resp_obj + '</strong></div>').insertBefore('#<?= TagId::BEFORE_MAIN_TABLE ?>');
+
+                    } else {
+                        $('<div id="<?= TagId::ALERT_ERROR ?>" class="alert alert-danger"><strong><?= TagId::ALERT_ERROR ?></strong></div>').insertBefore('#<?= TagId::BEFORE_MAIN_TABLE ?>');
+                    }
+
+                }
+            });
+
+
+        } else {
+
+            var warn = '<div id="<?= TagId::ALERT_ERROR ?>" class="alert alert-danger"><strong><?= $this->e('Selezionare una riga', 'translate') ?></strong></div>';
+            $(warn).insertBefore('#<?= TagId::BEFORE_MAIN_TABLE ?>');
+
+        }
+
+        $('#<?= TagId::MODAL_CONFIRM_DEL ?>').modal('hide');
+
+
+    }
+
+
+
+</script>

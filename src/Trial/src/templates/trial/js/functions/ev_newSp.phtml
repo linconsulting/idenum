@@ -1,0 +1,90 @@
+<?php
+
+use Trial\Db\Tables\ProfiliUtente;
+use Trial\Resources\Pages\TagId;
+use Trial\Resources\Pages\Urls;
+use Trial\Resources\Pages\Helpers\UiModal;
+use Trial\Resources\Pages\Bp;
+use Trial\Db\Tables\Utenti;
+?>
+
+
+<script type="text/javascript">
+
+<?php /* evento per la creazione di una nuova spesa */ ?>
+
+
+    function ev_newSp() {
+
+<?php
+/* se è un collaboratore esterno inserisce solo la causale 
+ * se è un commerciale può scegliere il bp
+ */
+?>
+<?php if ($dataResource->infoArea[Utenti::USR_IS_COLLAB]): ?>
+            buildCausale(true);
+<?php endif; ?>
+
+<?php if (!$dataResource->infoArea[Utenti::USR_IS_COLLAB] && !$dataResource->infoArea[Utenti::USR_IS_TECH]): ?>
+
+    <?php
+    // variabili per il dialog di inserimento BP
+    $uiModal = new UiModal();
+
+    $uiModal->buttonText = $this->e('Inserisci', 'translate');
+    $uiModal->buttonTextNo = $this->e('No', 'translate');
+
+    $uiModal->optionModal = array('id' => TagId::MODAL_BP, 'title' => $this->e('Clienti', 'translate'));
+    $uiModal->contentModal = '<div><table id="' . TagId::TABLE_BP . '" class="table table-striped table-hover" width="100%"></table></div>';
+    $uiModal->buttonAction = 'insCliente()';
+    $bpDataResource = $dataResource->getOtherResources(Bp::PAGE_NAME);
+    ?>
+
+
+            if ($('#<?= TagId::MODAL_BP ?>').length == 0) {
+
+                $(document.body).append('<?= $uiModal->getJsString() ?>');
+            }
+
+
+            var oTableBP = $('#<?= TagId::TABLE_BP ?>').DataTable({
+
+                "oLanguage": {"sUrl": "<?= Urls::PATH_ASSET_DOC ?>/<?= ProfiliUtente::getUserLocale($dataResource->userIdentity) ?>.txt"},
+                "columns": <?= $bpDataResource->translateDatatableHeaders() ?>,
+                "order": [[0, "asc"]],
+                "select": {style: 'os'},
+                "processing": true,
+                "serverSide": true,
+                "responsive": true,
+                "destroy": true,
+                "ajax": {"url": "<?= Urls::PATH_RENDER_DATATABLE . '/' . Bp::PAGE_NAME ?>", "type": "POST"},
+                "pageLength": 5
+
+            });
+
+    <?php
+    /*
+     * evento TAP e DBLCLICK che viene accodato alla pagina
+     * dopo l'inserimento della tabella dei BP
+     * 
+     */
+    ?>
+
+            $('#<?= TagId::TABLE_BP ?>').on('dblclick tap', 'td', function (e) {
+                tblCellAux = $('#<?= TagId::TABLE_BP ?>').DataTable().cell(this);
+    <?= $uiModal->buttonAction . ';' ?>
+            });
+
+
+            $('#<?= TagId::MODAL_BP ?>').modal('show');
+
+
+
+<?php endif; ?>
+
+
+    }
+
+
+
+</script>

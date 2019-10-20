@@ -1,0 +1,87 @@
+<?php 
+use Trial\Resources\Pages\TagId;
+use Trial\Db\Tables\Utenti;
+?>
+
+<?php $this->layout('trial-layout::default', ['title' => $this->e('Raccoglitore spese', 'translate')]) ?>
+
+
+<?php $this->start('custom_styles') ?>
+<link href="assets/bootstrap-3.3.6-dist/css/navbar.css" rel="stylesheet">
+<link href="assets/bootstrap-3.3.6-dist/DataTables/datatables.min.css" rel="stylesheet">
+<?php $this->stop() ?>
+
+
+<nav class="navbar navbar-default">
+
+    <div class="container-fluid">
+
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+
+            <a class="navbar-brand" href="#"><?=$this->e('Raccoglitore spese', 'translate')?></a>
+
+        </div>
+
+        <div id="navbar" class="navbar-collapse collapse">
+            <ul class="nav navbar-nav">
+                
+                
+                <?php if (!$dataResource->infoArea[Utenti::USR_IS_TECH]): ?>
+                    <li class="active"><a href="#" onclick="ev_newSp()"><?=$this->e('Nuova', 'translate')?></a></li>
+                <?php endif; ?>
+
+                <li><a href="#" onclick="ev_delSp()"><?=$this->e('Elimina', 'translate')?></a></li>
+
+                <?php if ($dataResource->infoArea[Utenti::USR_IS_TECH]): ?>                            
+                    <li class="active"><a onclick="ev_dtlSp()" href="#"><?=$this->e('Dettaglio voci per spesa', 'translate')?></a></li> 
+                <?php else: ?>                            
+                    <li><a onclick="ev_dtlSp()" href="#"><?=$this->e('Dettaglio voci per spesa', 'translate')?></a></li> 
+                <?php endif; ?>
+
+                <li class="dropdown">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"><?=$this->e('Rendicontazione', 'translate')?><span class="caret"></span></a>
+                    <ul class="dropdown-menu">
+                        <?php if (!$dataResource->infoArea[Utenti::USR_IS_TECH]): ?>
+                            <li><a href="#" onclick="newRend()"><?=$this->e('Crea', 'translate')?></a></li> 
+                        <?php endif; ?>                                                                        
+                        <li><a href="#" onclick="gotoRend()"><?=$this->e('Vai a', 'translate')?></a></li>
+                    </ul>
+                </li>
+            </ul>
+            <ul class="nav navbar-nav navbar-right">
+                <li><a target="_self" href="/" ><?=$this->e('Pagina principale', 'translate')?></a></li>
+            </ul>
+        </div><!--/.nav-collapse -->
+
+    </div><!--/.container-fluid -->
+</nav>
+
+
+<div class="jumbotron">            
+
+    <!-- contenuto -->
+    <div style="visibility: hidden;" id="<?= TagId::BEFORE_MAIN_TABLE ?>"></div>
+
+
+
+</div>
+
+
+<?php $this->start('javascript') ?>
+
+<script src="assets/jquery-min/jquery-1.12.2.min.js"></script>
+<script src="assets/bootstrap-3.3.6-dist/js/bootstrap.min.js"></script>
+<script src="assets/jquery.mobile-1.4.5/jquery.mobile-1.4.5.min.js"></script>
+<script src="assets/jquery-ui-bootstrap/js/jquery-ui-1.9.2.custom.min.js"></script>
+<script charset="utf8" src="assets/bootstrap-3.3.6-dist/DataTables/datatables.min.js"></script>
+
+<?php $this->insert('trial-js-funct::helper_ajax') ?>
+<?php $this->insert('trial-js::spese',['dataResource' => $dataResource]) ?>
+
+<?php $this->stop() ?>        

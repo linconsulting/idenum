@@ -1,0 +1,72 @@
+<?php
+
+use Trial\Resources\Pages\TagId;
+use Trial\Resources\Pages\Urls;
+?>
+
+
+<script type="text/javascript">
+
+
+    function insCliente() {
+
+        var cl = $('#<?= TagId::TABLE_BP ?>').DataTable().cell(tblCellAux.index().row, 0).data();
+        var pdata = {};        
+
+        if (update) {        
+
+            var idc = 0;
+            var idr = 0;
+
+            if (typeof (tblCell.index()) == 'undefined') {
+                idc = li.data('dtr-index');
+                idr = li.data('dtr-row');
+
+            } else {
+                idc = tblCell.index().column;
+                idr = tblCell.index().row;
+            }
+            
+            pdata = {'cName': '<?= $dataResource::PAGE_NAME ?>', 'mName' : 'updateCausale', 'mArgs' : { 'ref' : $('#<?= TagId::TABLE_MASTER ?>').DataTable().cell(idr, 0).data(), 'index' : idc, 'value' : cl }};
+        } else {
+            
+            pdata = {'cName': '<?= $dataResource::PAGE_NAME ?>', 'mName' : 'insertBp', 'mArgs' : {'value' : cl}};
+
+        }
+
+
+        ajx.post({url: '<?= Urls::PATH_AJAX_PROVIDER ?>',
+            data: pdata,
+            dataType: 'json',
+            success: function (data) {
+
+                if (data.resp_ok == true && (typeof (data.resp_obj) == 'number' || data.resp_obj === null)) {
+
+                    if (update) {
+                        update = false;
+                        $('#<?= TagId::TABLE_MASTER ?>').DataTable().draw();
+                    } else {
+                        location.reload(true);
+                    }
+
+
+                } else if (data.resp_ok == false && typeof (data.resp_obj) == 'string') {
+
+                    $('<div id="<?= TagId::ALERT_ERROR ?>" class="alert alert-danger"><strong>' + data.resp_obj + '</strong></div>').insertBefore('#<?= TagId::BEFORE_MAIN_TABLE ?>');
+
+                } else {
+                    $('<div id="<?= TagId::ALERT_ERROR ?>" class="alert alert-danger"><strong><?= $this->e('Errore', 'translate') ?></strong></div>').insertBefore('#<?= TagId::BEFORE_MAIN_TABLE ?>');
+                }
+
+
+
+            }
+        });
+
+        $('#<?= TagId::MODAL_BP ?>').modal('hide');
+
+
+    }
+
+
+</script>

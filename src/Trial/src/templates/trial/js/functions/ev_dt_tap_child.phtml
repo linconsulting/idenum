@@ -1,0 +1,19 @@
+<?php
+
+use Trial\Resources\Pages\TagId;
+?>
+
+
+<script type="text/javascript">
+
+    function ev_dt_tap_child() {
+
+        $('#<?= TagId::TABLE_MASTER ?>').on("tap", "td.child li", function () {
+
+            $(this).trigger('dblclick');
+
+        });
+
+    }
+
+</script>

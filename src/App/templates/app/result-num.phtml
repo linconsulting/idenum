@@ -1,0 +1,83 @@
+
+<?php
+
+use App\Mdm\DatiPersona;
+use App\Resources\HelperNum;
+
+$this->layout('layout::default', ['title' => 'Risultato']);
+
+$dp = new DatiPersona($dataResource['nome'],$dataResource['cognome'],$dataResource['nascita']);
+
+?>
+
+<!--<div class="jumbotron">-->
+
+<br>
+
+<div class="panel panel-default">
+    <div class="panel-heading">
+        <h2 class="panel-title"><?= $this->e('Identità - insieme dei caratteri fisici e psicologici che identificano la persona') ?></h2>
+    </div>
+    <div class="panel-body">
+        <h3 class="form-signin-heading"><?= $this->e('nome = ' . $dp->numeroNome()) ?></h3>    
+        <h3 class="form-signin-heading"><?= $this->e('cognome = ' . $dp->numeroCognome()) ?></h3>    
+    </div>
+</div>
+
+<div class="panel panel-default">
+    <div class="panel-heading">
+        <h2 class="panel-title"><?= $this->e('Nascita - costituisce il nostro cammino-itinerario di vita') ?></h2>
+    </div>
+    <div class="panel-body">
+        <h3 class="form-signin-heading"><?= $this->e('data di nascita = ' . $dp->numeroNascita()) ?></h3>    
+    </div>
+</div>
+
+
+<div class="panel panel-default">
+    <div class="panel-heading">
+        <h2 class="panel-title"><?= $this->e('Missione di vita - somma di nome, cognome e data di nascita ') ?></h2>
+    </div>
+    <div class="panel-body">
+        <h3 class="form-signin-heading"><?= $this->e('missione di vita = ' . $dp->numeroMissioneVita()) ?></h3>    
+    </div>
+</div>
+
+<div class="panel panel-default">
+    <div class="panel-heading">
+        <h2 class="panel-title"><?= $this->e('Frequenze per piano') ?></h2>
+    </div>
+    <div class="panel-body">
+        <h3 class="form-signin-heading"><?= $this->e('mentale = ' . HelperNum::freqPianoMentale($dp)) ?></h3>    
+    </div>
+    <div class="panel-body">
+        <h3 class="form-signin-heading"><?= $this->e('emotivo = ' . HelperNum::freqPianoEmotivo($dp)) ?></h3>    
+    </div>
+    <div class="panel-body">
+        <h3 class="form-signin-heading"><?= $this->e('fisico = ' . HelperNum::freqPianoFisico($dp)) ?></h3>    
+    </div>
+    <div class="panel-body">
+        <h3 class="form-signin-heading"><?= $this->e('spirituale = ' . HelperNum::freqPianoSpirituale($dp)) ?></h3>    
+    </div>
+</div>
+<div class="panel panel-default">
+    <div class="panel-heading">
+        <h2 class="panel-title"><?= $this->e('vocali e consonanti') ?></h2>
+    </div>
+    <div class="panel-body">
+        <h3 class="form-signin-heading"><?= $this->e('interiorità = ' . HelperNum::archetipoVocali($dp)) ?></h3>    
+    </div>
+    <div class="panel-body">
+        <h3 class="form-signin-heading"><?= $this->e('immagine esterna = ' . HelperNum::archetipoConsonanti($dp)) ?></h3>    
+    </div>    
+</div>
+
+
+
+<!--</div>-->
+
+<?php $this->start('javascript') ?>
+
+<?php //$this->insert('trial-js::login')  ?>
+
+<?php $this->stop() ?>     

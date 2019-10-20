@@ -1,0 +1,46 @@
+<?php
+
+use Trial\Db\Tables\ProfiliUtente;
+use Trial\Resources\Pages\TagId;
+use Trial\Resources\Pages\Urls;
+?>
+
+
+<script type="text/javascript">
+
+    function ev_init() {
+
+<?php
+/*
+ * 
+ * rimuovo scritta loading
+ * che si genera in fondo alla pagina
+ * dovuto ad un conflitto di css fra bootstrap e jquery mobile
+ *
+ */
+?>
+
+        ($('div.ui-loader.ui-corner-all.ui-body-a.ui-loader-default h1').text() == 'loading') ? $('div.ui-loader.ui-corner-all.ui-body-a.ui-loader-default').remove() : null;
+
+        $('<div><table id="<?= TagId::TABLE_MASTER ?>" class="table table-striped table-hover" width="100%"></table></div>').insertAfter('#<?= TagId::BEFORE_MAIN_TABLE ?>');
+
+        irend = 0;
+
+        $('#<?= TagId::TABLE_MASTER ?>').DataTable({
+
+            "oLanguage": {"sUrl": "<?= Urls::PATH_ASSET_DOC ?>/<?= ProfiliUtente::getUserLocale($dataResource->userIdentity) ?>.txt"},
+            "columns": <?= $dataResource->translateDatatableHeaders(TRUE) ?>,
+            "select": {style: 'os'},
+            "processing": true,
+            "serverSide": true,
+            "ajax": {"url": "<?= Urls::PATH_RENDER_DATATABLE . '/' . $dataResource::PAGE_NAME ?>", "type": "POST", "data": function (d) {
+                    d.pid = irend;
+                }},
+            "order": [[0, "desc"]],
+            "responsive": true,
+            "destroy": true,
+            "pageLength": 5
+        });
+    }
+
+</script>

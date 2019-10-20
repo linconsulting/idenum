@@ -1,0 +1,17 @@
+{
+	"sProcessing": "Attendere...",
+	"sLengthMenu": "_MENU_ Filtra risultati",
+	"sZeroRecords": "Dati non presenti.",	
+        "sInfo": "Righe presenti _TOTAL_",
+	"sInfoEmpty": "0 di 0 su 0 Righe",
+	"sInfoFiltered": "(filtrate su _MAX_  Righe)",
+	"sInfoPostFix": "",
+	"sSearch": "Cerca",
+	"sUrl": "",
+	"oPaginate": {
+		"sFirst":    "Prima",
+		"sPrevious": "",                
+		"sNext":     "",                
+		"sLast":     "Ultima"
+	}
+}

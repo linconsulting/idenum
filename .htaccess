@@ -1,0 +1,27 @@
+# ----------------------------------------------------------------------
+# Miscellaneous
+# ----------------------------------------------------------------------
+
+DirectoryIndex index.php
+Options -Indexes
+
+#STRONG HTACCESS PROTECTION
+<Files ~ "^.*\.([Hh][Tt][Aa])">
+ order allow,deny
+ deny from all
+ satisfy all
+</Files>
+
+#Script files PROTECTION
+#iniziano con _
+<Files ~ "^_.*">
+ order allow,deny
+ deny from all
+ satisfy all
+</Files>
+
+
+
+
+#RewriteRule (.*) /public/$1
+RewriteRule ^(.*)$ /public/$1

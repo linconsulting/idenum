@@ -1,0 +1,33 @@
+<?php $this->layout('layout::default', ['title' => 'Home']) ?>
+
+<div class="jumbotron">
+
+
+    <form class="form-signin" method="post" accept-charset="utf-8" action="/pardat">
+
+        <h2 class="form-signin-heading"><?= $this->e('Invia dati') ?></h2>    
+
+        <label for="inputNome" class="sr-only"><?= $this->e('Nome') ?></label>                
+
+        <input type="text" id="inputNome" class="form-control" name="nome" placeholder="<?= $this->e('Nome') ?>" required autofocus>
+
+        <label for="inputCognome" class="sr-only"><?= $this->e('Cognome') ?></label>
+
+        <input type="text" id="inputCognome" class="form-control" name="cognome" placeholder="<?= $this->e('Cognome') ?>" required>
+        
+        <label for="inputNascita" class="sr-only"><?= $this->e('Data di nascita gg/mm/aaaa') ?></label>
+
+        <input type="text" id="inputNascita" class="form-control" name="nascita" placeholder="<?= $this->e('Data di nascita gg/mm/aaaa') ?>" required>
+
+        <button class="btn btn-lg btn-primary btn-block" type="submit"><?= $this->e('Invia') ?></button>
+
+    </form>
+   
+    
+</div>
+
+<?php $this->start('javascript') ?>
+
+<?php //$this->insert('trial-js::login') ?>
+
+<?php $this->stop() ?>     

@@ -1,0 +1,138 @@
+<script type="text/javascript">
+
+<?php
+/*
+ * ajx è l'oggetto che viene usato per le chiamate ajax con il server
+ */
+?>
+
+    var ajx = {
+        _type: 'POST',
+        _url: '',
+        _data: {},
+        _dataType: 'text',
+        _async: true,
+        _er_reload: function (jqXHR, textStatus, errorThrown) {
+            alert(errorThrown);
+            location.reload(true);
+        },
+        _error: function (jqXHR, textStatus, errorThrown) {
+            alert(errorThrown);
+        },
+        _success: function (data, textStatus, jqXHR) {
+        },
+        _send: function (param) {
+
+            if (typeof param != 'undefined' && param != false && param != null) {
+
+                return $.ajax({
+                    type: param.type,
+                    url: param.url,
+                    data: param.data,
+                    dataType: param.dataType,
+                    async: param.async,
+                    error: param.error,
+                    success: param.success
+                });
+
+            } else {
+                return false;
+            }
+
+
+        },
+        _adjParam: function (param) {
+            if (typeof param == 'undefined') {
+                return false;
+            } else {
+                return $.extend({
+                    type: this._type,
+                    url: this._url,
+                    data: this._data,
+                    dataType: this._dataType,
+                    async: this._async,
+                    error: this._er_reload,
+                    success: this._success
+                }, param);
+            }
+        },
+        post: function (param) {
+
+            param = this._adjParam(param);
+
+            if (param != false) {
+                param.type = this._type;
+                this._send(param);
+            } else {
+                return param;
+            }
+
+        },
+        get: function (param) {
+
+            param = this._adjParam(param);
+
+            if (param != false) {
+                param.type = 'GET';
+                this._send(param);
+            } else {
+                return param;
+            }
+
+        },
+        syncData: function (param, ocallBack) {
+
+<?php
+/*
+ * viene usata tutte le volte che si vuol fare eseguire
+ * un'update alla tabella nel db del server
+ * 
+ * fld: il nome del campo della tabella
+ * fldv: il nuovo valore del campo fld
+ * rif: è l'id del record della tabella da aggiornare
+ * 
+ */
+?>
+            if (typeof param.url == 'undefined') {
+                return false;
+            } else if (typeof param.fld == 'undefined') {
+                return false;
+            } else if (typeof param.fldv == 'undefined') {
+                return false;
+            } else if (typeof param.rif == 'undefined') {
+                return false;
+            } else {
+                param['data'] = {
+                    'tblFiel': param.fld,
+                    'dataTblTo': param.fldv,
+                    'idTblTo': param.rif
+                };
+
+                if (typeof ocallBack != 'undefined') {
+
+
+                    if (typeof ocallBack.success != 'undefined') {
+                        param['success'] = ocallBack.success;
+                    }
+
+                    if (typeof ocallBack.error != 'undefined') {
+                        param['error'] = ocallBack.error;
+                    }
+
+                }
+            }
+
+            param = this._adjParam(param);
+
+            if (param != false) {
+
+                this._send(param);
+
+            } else {
+                return param;
+            }
+
+        }
+
+    };
+</script>    

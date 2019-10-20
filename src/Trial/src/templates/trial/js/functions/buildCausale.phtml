@@ -1,0 +1,138 @@
+<?php
+
+use Trial\Resources\Pages\TagId;
+use Trial\Resources\Pages\Urls;
+use Trial\Resources\Pages\Helpers\UiModal;
+use Trial\Db\Tables\Spese as Sp;
+use Trial\Db\Tables\Utenti;
+?>
+
+
+<script type="text/javascript">
+
+
+
+    function buildCausale(isNew) {
+
+<?php
+$uiModal = new UiModal();
+
+$uiModal->buttonText = $this->e('Inserisci', 'translate');
+$uiModal->buttonTextNo = $this->e('No', 'translate');
+
+$uiModal->optionModal = array('id' => TagId::MODAL_CAUSALE, 'title' => $this->e('Inserire causale', 'translate'));
+$uiModal->contentModal = '<input id="' . TagId::INPUT_CAUSALE . '" type="text" class="form-control" placeholder="">';
+$uiModal->buttonAction = 'postCausale()';
+?>
+
+
+        if ($('#<?= TagId::MODAL_CAUSALE ?>').length == 0) {
+
+            $(document.body).append('<?php echo $uiModal->getJsString() ?>');
+
+<?php
+/*
+ * evento KEYPRESS che viene associato all'input
+ * per l'inserimento dell'importo
+ * 
+ * evento SHOWN per il modal che attiva il focus
+ * all'input
+ * 
+ */
+?>
+            $('#<?= TagId::INPUT_CAUSALE ?>').on('keypress', this, function (e) {
+                if ($(this).val() != '' && e.keyCode == 13) {
+<?= $uiModal->buttonAction . ';' ?>
+                }
+            });
+
+            $('#<?= TagId::MODAL_CAUSALE ?>').on('shown.bs.modal', function () {
+                $('#<?= TagId::INPUT_CAUSALE ?>').focus();
+            });
+
+
+        }
+        
+
+<?php
+/*
+ * assegna la causale al controllo input 
+ * leggendola dalla riga selezionata
+ */
+?>
+
+        if (isNew) {
+            $('#<?= TagId::INPUT_CAUSALE ?>').val("");
+            return;
+        }
+
+        if (tblCell === null) {
+            $('#<?= TagId::TABLE_MASTER ?> tr td').eq(0).trigger('dblclick');
+        }
+
+        var idr = typeof (tblCell.index()) == 'undefined' ? li.data('dtr-row') : tblCell.index().row;
+        var idc = <?= $dataResource->getColumnsHelper()->getFieldIndex(Sp::FLD_CAUSALE) === FALSE ? 999 : $dataResource->getColumnsHelper()->getFieldIndex(Sp::FLD_CAUSALE) ?>;
+
+        $('#<?= TagId::INPUT_CAUSALE ?>').val($('#<?= TagId::TABLE_MASTER ?>').DataTable().cell(idr, idc).data());
+
+        $('#<?= TagId::MODAL_CAUSALE ?>').modal('show');
+
+    }
+
+
+
+<?php
+/**
+ * logica eseguita per l'inserimento della causale
+ * durante la creazione di un nuovo record "spesa"
+ */
+?>
+    function postCausale() {
+
+        userSelData = $('#<?= TagId::INPUT_CAUSALE ?>').val();
+
+        var idc = 0;
+        var idr = 0;        
+        var vid = 0;
+        var act = 'updateCausale';
+        
+
+        if (userSelData != '' && update == true) {
+
+            if (typeof (tblCell.index()) == 'undefined') {
+                idc = li.data('dtr-index');
+                idr = li.data('dtr-row');
+
+            } else {
+                idc = tblCell.index().column;
+                idr = tblCell.index().row;
+            }
+
+            vid = $('#<?= TagId::TABLE_MASTER ?>').DataTable().cell(idr, 0).data();
+
+
+        } else if (userSelData != '' && (update == false || update === null)) {
+
+            act = 'insertCausale';
+
+        } else {
+            return;
+        }
+
+        
+        ajx.post({url: '<?= Urls::PATH_AJAX_PROVIDER ?>',
+            data: {'cName': '<?= $dataResource::PAGE_NAME ?>', 'mName': act, 'mArgs' : { 'ref' : vid, 'index': idc, 'value': userSelData }},
+            success: function () {
+                update = false;
+                irend = (act == 'insertCausale') ? 0 : irend;
+                $('#<?= TagId::TABLE_MASTER ?>').DataTable().draw();
+            }
+        });
+
+        $('#<?= TagId::MODAL_CAUSALE ?>').modal('hide');
+
+    }
+
+
+
+</script>
