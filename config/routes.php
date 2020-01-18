@@ -26,3 +26,7 @@ $app->post('/pardat', App\Action\LoginAction::class, 'pars_data');
 $app->post('/ajx', App\Action\AjaxProvider::class, 'ajax_provider');
 
 $app->get('/test', App\Action\TestAction::class, 'test');
+
+//$app->get('/api', Api\Action\TestAction::class, 'testApi');
+
+$app->get('/api/{name}', Api\Action\DispatchAction::class, 'dispatchApi');

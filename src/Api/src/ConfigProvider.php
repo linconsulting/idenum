@@ -1,6 +1,6 @@
 <?php
 
-namespace App;
+namespace Api;
 
 /**
  * The configuration provider for the App module
@@ -29,7 +29,7 @@ class ConfigProvider
     public function __invoke()
     {
         return [
-            //'dependencies' => $this->getDependencies()
+            'dependencies' => $this->getDependencies()
             //'templates'    => $this->getTemplates(),
         ];
     }
@@ -44,18 +44,8 @@ class ConfigProvider
         return [
             
             'factories'  => [
-//                Action\HomePageAction::class => Action\HomePageFactory::class,
-//                Auth\Adapter::class => Auth\AdapterFactory::class,
-//                AuthenticationService::class => Auth\AuthenticationServiceFactory::class,
-//                Action\LoginAction::class => Action\LoginFactory::class,
-//                Action\WelcomeAction::class => Action\WelcomeFactory::class,
-//                Action\DispatchAction::class => Action\DispatchFactory::class,
-//                Action\RenderDatatable::class => Action\RenderDatatableFactory::class,
-//                Action\AjaxProvider::class => Action\AjaxProviderFactory::class,
-//                Action\TestAction::class => Action\TestFactory::class,
-//                Translator::class => TranslatorServiceFactory::class,
-//                PlatesEngine::class => PlatesEngineFactory::class,
-//                PlatesTranslator::class => PlatesTranslatorFactory::class                
+                Action\DispatchAction::class => Action\DispatchFactory::class
+                //ApiContainer\Ifxcal::class => ApiContainer\IfxcalFactory::class
             ],
         ];
     }
