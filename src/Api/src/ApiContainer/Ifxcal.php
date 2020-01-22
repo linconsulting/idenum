@@ -4,6 +4,7 @@
 namespace Api\ApiContainer;
 
 use Zend\Diactoros\Response\TextResponse;
+use Zend\Db\Adapter\Adapter;
 
 
 
@@ -29,7 +30,11 @@ class Ifxcal {
 
     public function process(){
         
-        return new TextResponse("Risposta OK");
+        $dbAdapter = new Adapter($this->dbParams);
+        
+        $resulSet = $dbAdapter->query('SELECT * FROM `t1` WHERE `c1` = ?', [1]);
+        
+        return new TextResponse("Risposta OK - ".print_r($resulSet,TRUE));
         
     }
     

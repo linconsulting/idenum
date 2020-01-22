@@ -30,5 +30,6 @@ return [
             'show_trace' => true,
             'ajax_only'  => true,
         ],
-    ],
+    ]
+    
 ];
